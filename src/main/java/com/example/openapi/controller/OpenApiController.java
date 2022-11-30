@@ -10,6 +10,11 @@ import java.io.IOException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import ch.qos.logback.classic.html.UrlCssBuilder;
 
 @RestController
@@ -55,8 +60,20 @@ public class OpenApiController {
 	        // stream을 사용하고 난 뒤 close 필수 
 	        rd.close();
 	        conn.disconnect();
-	        System.out.println(sb.toString());
-	        return sb.toString();
+	        
+	        JsonParser parser = new JsonParser();
+	        JsonElement element = parser.parse(sb.toString());
+	        // 데이터의 생김과 관련 : element 전체를 object 타입으로 가져옴 => 그 안에 response 객체{}를 object 타입으로 가져옴 = return 타입은 object
+	        JsonObject responseObject = element.getAsJsonObject().get("response").getAsJsonObject();
+	        JsonObject bodyObject = responseObject.get("body").getAsJsonObject();
+	        JsonObject itemsObject = bodyObject.get("items").getAsJsonObject();
+	        JsonArray itemArray = itemsObject.get("item").getAsJsonArray();
+	        JsonObject item = itemArray.get(0).getAsJsonObject();
+	        String data = item.get("wfSv").getAsString();
+	        
+//	        System.out.println(sb.toString());
+	        System.out.println(data);
+	        return data;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
