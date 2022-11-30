@@ -20,6 +20,8 @@ import ch.qos.logback.classic.html.UrlCssBuilder;
 @RestController
 public class OpenApiController {
 	
+//	final String servicekey = "HcKKeysAdTw4YkxmGY5%2FjKi%2BehZGp%2BUd0pYQeH3A0jL%2BeQ%2Fn15oOVxND9xY7ZeHfbIdV5PXlnd%2Fe5hb74idbkw%3D%3D";
+	
 	@GetMapping("/weather")
 	public String weather() {
 		try {
@@ -74,6 +76,101 @@ public class OpenApiController {
 //	        System.out.println(sb.toString());
 	        System.out.println(data);
 	        return data;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		
+	}
+	
+	
+	@GetMapping("/stock")
+	public String stock() {
+			
+		try {
+			String servicekey = "HcKKeysAdTw4YkxmGY5%2FjKi%2BehZGp%2BUd0pYQeH3A0jL%2BeQ%2Fn15oOVxND9xY7ZeHfbIdV5PXlnd%2Fe5hb74idbkw%3D%3D";
+			StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo");
+			// api가 아닌 java 제공 코드
+			urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" +servicekey);
+			urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); 
+			urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("10", "UTF-8"));
+			urlBuilder.append("&" + URLEncoder.encode("resultType","UTF-8") + "=" + URLEncoder.encode("json", "UTF-8"));
+			
+			
+			URL url = new URL(urlBuilder.toString());
+		        
+	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	        conn.setRequestMethod("GET");
+	        conn.setRequestProperty("Content-type", "application/json");
+	        System.out.println("Response code: " + conn.getResponseCode());
+	        
+	        BufferedReader rd;
+	        // 코드 200이 아니면 모두 오류
+	        if(conn.getResponseCode() == 200) {
+	            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	        } else {
+	            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+	        }
+	        StringBuilder sb = new StringBuilder();
+	        String line;
+
+	        while ((line = rd.readLine()) != null) {
+	            sb.append(line);
+	        }
+
+	        rd.close();
+	        conn.disconnect();
+	        System.out.println(sb.toString());
+	        return sb.toString();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+	
+	@GetMapping("/newenergy")
+	public String newEnergy() {
+		try {
+			String servicekey = "HcKKeysAdTw4YkxmGY5%2FjKi%2BehZGp%2BUd0pYQeH3A0jL%2BeQ%2Fn15oOVxND9xY7ZeHfbIdV5PXlnd%2Fe5hb74idbkw%3D%3D";
+			// https가 아닌 http로 사용 
+			StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/B552070/oamsFile2/callOamsFile2");
+		
+			// api가 아닌 java 제공 코드
+			urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" +servicekey);
+			urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); 
+			urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("10", "UTF-8"));
+			// 예시, 미리보기를 통해 소문자 입력임을 확인 
+			urlBuilder.append("&" + URLEncoder.encode("apiType","UTF-8") + "=" + URLEncoder.encode("json", "UTF-8"));
+//			urlBuilder.append("&" + URLEncoder.encode("baseDate","UTF-8") + "=" + URLEncoder.encode("2017-06-06", "UTF-8")); /*기준일자*/
+//			urlBuilder.append("&" + URLEncoder.encode("area","UTF-8") + "=" + URLEncoder.encode("일산", "UTF-8")); /*지역*/
+			
+			URL url = new URL(urlBuilder.toString());
+		        
+	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	        conn.setRequestMethod("GET");
+	        conn.setRequestProperty("Content-type", "application/json");
+	        System.out.println("Response code: " + conn.getResponseCode());
+	        
+	        BufferedReader rd;
+	        // 코드 200이 아니면 모두 오류
+	        if(conn.getResponseCode() == 200) {
+	            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	        } else {
+	            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+	        }
+	        StringBuilder sb = new StringBuilder();
+	        String line;
+	
+	        while ((line = rd.readLine()) != null) {
+	            sb.append(line);
+	        }
+	
+	        rd.close();
+	        conn.disconnect();
+	        System.out.println(sb.toString());
+	        return sb.toString();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
